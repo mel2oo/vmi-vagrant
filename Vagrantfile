@@ -71,9 +71,7 @@ Vagrant.configure(2) do |config|
     #     # ansible.start_at_task =  ''
     #     ansible.playbook = "vagrant/ansible/playbook_1.yml"
     #     ansible.extra_vars = {
-    #         'root_dir': root_dir,
-    #         # to do the KVM git checkout if necessary
-    #         'is_windows': Gem.win_platform?
+    #         'root_dir': root_dir
     #     }
     # end
 
