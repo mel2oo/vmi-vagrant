@@ -55,7 +55,7 @@ Vagrant.configure(2) do |config|
             :type => "rsync"
     end
 
-    # 使用debian国内源
+    # change debian apt source
     config.vm.provision "shell",
         inline: "wget -O /etc/apt/sources.list http://qiniu.xiwen.online/Debian10.list && apt-get update"
 
