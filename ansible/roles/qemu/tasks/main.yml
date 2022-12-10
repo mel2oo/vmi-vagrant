@@ -1,0 +1,31 @@
+---
+- name: install QEMU dependencies
+  package:
+    name: "{{ item }}"
+  with_items:
+    - libpixman-1-dev
+    - flex
+    - bison
+    - pkg-config
+    - zlib1g-dev
+    - libglib2.0-dev
+    - dh-autoreconf
+    - libspice-server-dev
+    - libseccomp-dev
+
+- name: configure QEMU
+  command: ./configure --target-list=x86_64-softmmu --enable-spice --enable-seccomp --prefix=/usr/local
+  args:
+    chdir: "{{ root_dir }}/qemu"
+  become: false
+
+- name: build QEMU
+  command: "make -j{{ ansible_processor_vcpus }}"
+  args:
+    chdir: "{{ root_dir }}/qemu"
+  become: false
+
+- name: install QEMU
+  command: make install
+  args:
+    chdir: "{{ root_dir }}/qemu"

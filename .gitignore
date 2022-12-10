@@ -1,0 +1,19 @@
+# IDE
+/.vscode
+
+# ignore make deb-pkg generated packages
+/*.diff.gz
+/*.dsc
+/*.buildinfo
+/*.changes
+/*.orig.tar.gz
+/*.deb
+
+# python
+/venv
+
+# docs build
+/docs/_build
+
+.vagrant/
+*.retry

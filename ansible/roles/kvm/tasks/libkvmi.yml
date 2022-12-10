@@ -1,0 +1,29 @@
+---
+- name: install libkvmi build deps
+  package:
+    name: "{{ item }}"
+  with_items:
+    - uuid-dev
+
+- name: bootstrap libkvmi
+  command: ./bootstrap
+  args:
+    chdir: "{{ root_dir }}/libkvmi"
+  become: false
+
+- name: configure libkvmi
+  command: ./configure
+  args:
+    chdir: "{{ root_dir }}/libkvmi"
+  become: false
+
+- name: make libkvmi
+  command: make
+  args:
+    chdir: "{{ root_dir }}/libkvmi"
+  become: false
+
+- name: install libkvmi
+  command: make install
+  args:
+    chdir: "{{ root_dir }}/libkvmi"
