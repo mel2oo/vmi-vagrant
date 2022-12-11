@@ -21,5 +21,8 @@
         - htop
         - vim
 
-  roles:
-    - kvm
+    - name: git clone kvm-vmi
+      shell: git clone https://github.com/KVM-VMI/kvm-vmi.git {{ root_dir }}
+
+  # roles:
+  #   - kvm

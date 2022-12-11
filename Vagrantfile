@@ -5,8 +5,15 @@ Vagrant.configure(2) do |config|
     config.vm.box_version = "4.1.18"
     config.vm.define "kvmi"
 
+    if Vagrant.has_plugin?("vagrant-proxyconf")
+        config.proxy.http     = "http://192.168.31.136:7890/"
+        config.proxy.https    = "http://192.168.31.136:7890/"
+        config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
+    end
+
     # configuration
-    root_dir = '/vagrant'
+    vagrant_dir = '/vagrant'
+    project_dir = '/kvm-vmi'
     enabled_vms = {
         'winxp': true,
         'win7': false,
@@ -21,7 +28,7 @@ Vagrant.configure(2) do |config|
         libvirt.nested = true
 
         # expose parent dir
-        override.vm.synced_folder ".", root_dir,
+        override.vm.synced_folder ".", vagrant_dir,
             :type => "nfs",
             :nfs_version => 4,
             :nfs_udp => false,
@@ -38,7 +45,7 @@ Vagrant.configure(2) do |config|
         vbox.linked_clone = true
 
         # virtualbox needs specific config for NFS, use vboxsf instead
-        override.vm.synced_folder ".", root_dir, SharedFoldersEnableSymlinksCreate: false,
+        override.vm.synced_folder ".", vagrant_dir, SharedFoldersEnableSymlinksCreate: false,
             :type => "virtualbox"
     end
 
@@ -51,8 +58,18 @@ Vagrant.configure(2) do |config|
         # excluding .git directories is recommended of course, but here we need the kvm/.git directory
         # since we want to do the checkout from inside the VM
         # We cannot do an initial checkout on the Windows host because of filesystem limitations.
-        override.vm.synced_folder ".", root_dir,
+        override.vm.synced_folder ".", vagrant_dir,
             :type => "rsync"
+    end
+
+    config.vm.provider "parallels" do |parallels, override|
+        parallels.cpus = 4
+        parallels.memory = 2048
+        parallels.linked_clone = true
+        parallels.update_guest_tools = true
+        parallels.customize "post-import", ["set", :id, "--nested-virt", "on"]
+
+        override.vm.synced_folder ".", vagrant_dir
     end
 
     # change debian apt source
@@ -65,15 +82,15 @@ Vagrant.configure(2) do |config|
     config.vm.provision "shell",
         inline: "apt-get install -y ansible && sed -i -E 's/^#?(stdout_callback\s*=\s*).*$/stdout_callback = yaml/' /etc/ansible/ansible.cfg"
 
-    # config.vm.provision "ansible_local" do |ansible|
-    #     # debug
-    #     # ansible.verbose =  '-vvv'
-    #     # ansible.start_at_task =  ''
-    #     ansible.playbook = "vagrant/ansible/playbook_1.yml"
-    #     ansible.extra_vars = {
-    #         'root_dir': root_dir
-    #     }
-    # end
+    config.vm.provision "ansible_local" do |ansible|
+        # debug
+        # ansible.verbose =  '-vvv'
+        # ansible.start_at_task =  ''
+        ansible.playbook = "/vagrant/ansible/playbook_1.yml"
+        ansible.extra_vars = {
+            'root_dir': project_dir
+        }
+    end
 
     # config.vm.provision "reload"
 
@@ -81,9 +98,9 @@ Vagrant.configure(2) do |config|
     #     # debug
     #     # ansible.verbose =  '-vvv'
     #     # ansible.start_at_task =  ''
-    #     ansible.playbook = "vagrant/ansible/playbook_2.yml"
+    #     ansible.playbook = "/vagrant/ansible/playbook_2.yml"
     #     ansible.extra_vars = {
-    #         'root_dir': root_dir,
+    #         'root_dir': project_dir,
     #         'enabled_vms': enabled_vms
     #     }
     # end
