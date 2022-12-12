@@ -22,7 +22,8 @@
         - vim
 
     - name: git clone kvm-vmi
-      shell: git clone --depth 1 https://github.com/KVM-VMI/kvm-vmi.git {{ root_dir }} --recursive
+      shell: git clone --depth 1 https://github.com/KVM-VMI/kvm-vmi.git {{ root_dir }} --recursive && \
+        cd {{ root_dir }} && git checkout master && git submodule update
 
   roles:
     - kvm
