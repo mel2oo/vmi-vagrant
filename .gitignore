@@ -17,3 +17,5 @@
 
 .vagrant/
 *.retry
+
+/image

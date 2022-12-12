@@ -5,13 +5,6 @@ Vagrant.configure(2) do |config|
     config.vm.box_version = "4.1.18"
     config.vm.define "kvmi"
 
-    if Vagrant.has_plugin?("vagrant-proxyconf")
-        config.proxy.http     = "http://10.23.30.12:7890/"
-        config.proxy.https    = "http://10.23.30.12:7890/"
-        config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
-        config.proxy.enabled  = { apt: false }
-    end
-
     # configuration
     vagrant_dir = '/vagrant'
     project_dir = '/kvm-vmi'
@@ -73,19 +66,19 @@ Vagrant.configure(2) do |config|
         override.vm.synced_folder ".", vagrant_dir
     end
 
-    # change debian apt source
-    config.vm.provision "shell",
-        inline: "cp -f /vagrant/source/debian10.list /etc/apt/sources.list && apt update"
+    # # change debian apt source
+    # config.vm.provision "shell",
+    #     inline: "cp -f /vagrant/source/debian10.list /etc/apt/sources.list && apt update"
 
     # install ansible
     # set stdout_callback = yaml to improve error output
     # note: problem with \1yaml -> \x01yaml in ansible.cfg
     config.vm.provision "shell",
-        inline: "apt-get install -y ansible && sed -i -E 's/^#?(stdout_callback\s*=\s*).*$/stdout_callback = yaml/' /etc/ansible/ansible.cfg"
+        inline: "apt-get update && apt-get install -y ansible && sed -i -E 's/^#?(stdout_callback\s*=\s*).*$/stdout_callback = yaml/' /etc/ansible/ansible.cfg"
 
     config.vm.provision "ansible_local" do |ansible|
         # debug
-        # ansible.verbose =  '-vvv'
+        ansible.verbose =  '-vvv'
         # ansible.start_at_task =  ''
         ansible.playbook = "/vagrant/ansible/playbook_1.yml"
         ansible.extra_vars = {
@@ -93,16 +86,16 @@ Vagrant.configure(2) do |config|
         }
     end
 
-    # config.vm.provision "reload"
+    config.vm.provision "reload"
 
-    # config.vm.provision "ansible_local" do |ansible|
-    #     # debug
-    #     # ansible.verbose =  '-vvv'
-    #     # ansible.start_at_task =  ''
-    #     ansible.playbook = "/vagrant/ansible/playbook_2.yml"
-    #     ansible.extra_vars = {
-    #         'root_dir': project_dir,
-    #         'enabled_vms': enabled_vms
-    #     }
-    # end
+    config.vm.provision "ansible_local" do |ansible|
+        # debug
+        # ansible.verbose =  '-vvv'
+        # ansible.start_at_task =  ''
+        ansible.playbook = "/vagrant/ansible/playbook_2.yml"
+        ansible.extra_vars = {
+            'root_dir': project_dir,
+            'enabled_vms': enabled_vms
+        }
+    end
 end
