@@ -6,8 +6,8 @@ Vagrant.configure(2) do |config|
     config.vm.define "kvmi"
 
     if Vagrant.has_plugin?("vagrant-proxyconf")
-        config.proxy.http     = "http://192.168.31.136:7890/"
-        config.proxy.https    = "http://192.168.31.136:7890/"
+        config.proxy.http     = "http://10.23.30.12:7890/"
+        config.proxy.https    = "http://10.23.30.12:7890/"
         config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
         config.proxy.enabled  = { apt: false }
     end
