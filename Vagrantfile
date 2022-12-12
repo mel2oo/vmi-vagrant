@@ -9,6 +9,7 @@ Vagrant.configure(2) do |config|
         config.proxy.http     = "http://192.168.31.136:7890/"
         config.proxy.https    = "http://192.168.31.136:7890/"
         config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
+        config.proxy.enabled  = { apt: false }
     end
 
     # configuration
@@ -74,7 +75,7 @@ Vagrant.configure(2) do |config|
 
     # change debian apt source
     config.vm.provision "shell",
-        inline: "wget -O /etc/apt/sources.list http://qiniu.xiwen.online/Debian10.list && apt-get update"
+        inline: "cp -f /vagrant/source/debian10.list /etc/apt/sources.list && apt update"
 
     # install ansible
     # set stdout_callback = yaml to improve error output
