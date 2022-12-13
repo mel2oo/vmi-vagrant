@@ -66,9 +66,9 @@ Vagrant.configure(2) do |config|
         override.vm.synced_folder ".", vagrant_dir
     end
 
-    # # change debian apt source
-    # config.vm.provision "shell",
-    #     inline: "cp -f /vagrant/source/debian10.list /etc/apt/sources.list && apt update"
+    # change debian apt source
+    config.vm.provision "shell",
+        inline: "cp -f /vagrant/source/debian10.list /etc/apt/sources.list && apt update"
 
     # install ansible
     # set stdout_callback = yaml to improve error output
