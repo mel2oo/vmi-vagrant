@@ -79,7 +79,6 @@ Vagrant.configure(2) do |config|
     config.vm.provision "ansible_local" do |ansible|
         # debug
         # ansible.verbose =  '-vvv'
-        # ansible.start_at_task =  ''
         ansible.playbook = "/vagrant/ansible/playbook_1.yml"
         ansible.extra_vars = {
             'root_dir': project_dir
@@ -91,7 +90,6 @@ Vagrant.configure(2) do |config|
     config.vm.provision "ansible_local" do |ansible|
         # debug
         # ansible.verbose =  '-vvv'
-        # ansible.start_at_task =  ''
         ansible.playbook = "/vagrant/ansible/playbook_2.yml"
         ansible.extra_vars = {
             'root_dir': project_dir,
